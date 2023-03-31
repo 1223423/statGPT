@@ -1,0 +1,4 @@
+Name: statGPT
+Description: Replace highlighted text and code with (hopefully) working code.
+Binding: replace_text
+Interactive: true
