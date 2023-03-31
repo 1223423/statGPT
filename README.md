@@ -25,4 +25,5 @@ Alternatively, you can set persistent keys in your `.Renviron` file.
 ## Questions
 
 **Why is the code I got not working?** Dunno try asking it again differently lmao
-**Where's the documentation and error handling?** The world is changing rapidly and we ain't got time for any of that, my friend. I'll add it over time:)
+
+**Where's the documentation and error handling?** The world is changing rapidly and we ain't got time for any of that, my friend
