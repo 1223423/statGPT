@@ -30,13 +30,21 @@ prompt_GPT <- \(prompt,
     "https://api.openai.com/v1/chat/completions",
     add_headers("Authorization" = paste("Bearer", API_KEY)),
     content_type_json(),
-    body = jsonlite::toJSON(c(parameters, list(messages = messages)), auto_unbox = TRUE)
+    body = toJSON(c(parameters, list(messages = messages)), auto_unbox = TRUE)
     )
 
   ## Handling error codes
   if (!post_res$status_code %in% 200:299) {
+    cat("[ERROR] Status Code:", post_res$status_code,"\n")
     stop(content(post_res))
   }
 
-  return(content(post_res))
+  parsed_content <- content(post_res)
+
+
+  log_debug(paste("[DEBUG] Token Usage:\n","\tPrompt:",parsed_content$usage$prompt_tokens,
+            "\n\tCompletion:",parsed_content$usage$completion_tokens,
+            "\n\tTotal:",parsed_content$usage$total_tokens, "|", MAX_TOKENS))
+
+  return(parsed_content)
 }
