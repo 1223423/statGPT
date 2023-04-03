@@ -2,7 +2,7 @@
 
 A simple RStudio addin to instantly transform broken English into working code, visualization, analysis, and more using OpenAI's GPT models. When activated, the addin will attempt to replace the highlighted text request into working code.
 
-Attempts to provide broader context of previously written code through minification (currently only removing explicit comments & whitespace). If the code context is too large it will be truncated such that the total prompt is around ~2750 tokens, leaving the remainder of the 4096 tokens for the response. This can be changed via the 
+Attempts to provide context of previously written slightly minified code (currently only removing explicit comments & whitespace). If the code context is too large it will be truncated such that the total prompt is around ~2750 tokens, leaving the remainder of the 4096 tokens for the response. This can be changed via the 
 
 Future updates will include more sophisticated minification via multiple prompting to allow for larger code contexts.
 
