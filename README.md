@@ -22,6 +22,8 @@ Alternatively, you can set persistent keys in your `.Renviron` file.
 
 [demo.webm](https://user-images.githubusercontent.com/40682719/229134788-66de0b87-24bb-4a14-bb83-06b094d42918.webm)
 
-## I didn't get working code
+## Questions
 
-Dunno try asking it again differently lmao
+**Why is the code I got not working?** Dunno try asking it again differently lmao
+
+**Where's the documentation and error handling?** The world is changing rapidly and we ain't got time for any of that, my friend
