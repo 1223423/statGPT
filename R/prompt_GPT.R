@@ -1,8 +1,23 @@
-library(httr)
-library(jsonlite)
+
+#' Get OpenAI model completion via http
+#'
+#' @param prompt_query (string) the query to be sent to the AI model.
+#' @param prompt_context (string) the code context for the query (optional).
+#' @param API_KEY (string) the OpenAI API key.
+#' @param MODEL (string) the name of the AI model.
+#' @param CONTEXT_LIMIT (integer) the total prompt limit in estimated tokens (optional, default: 2750)
+#' @param TEMPERATURE (float) the model temperature ranging 0-2 (optional, default: 1)
+#'
+#' @return (list) of (string) The model completion string
+#' @export
+#'
+#' @examples
+#'
+#'
+#'
 
 prompt_GPT <- \(prompt_query,
-                prompt_context,
+                prompt_context = "",
                 API_KEY = Sys.getenv("OPENAI_API_KEY"),
                 MODEL = Sys.getenv("OPENAI_MODEL"),
                 CONTEXT_LIMIT = as.numeric(Sys.getenv("STATGPT_CTXLIM", 2750)),
@@ -17,7 +32,7 @@ prompt_GPT <- \(prompt_query,
   # Prompt design
   STATGPT_QUERY <- paste("<QUERY>",prompt_query,"</QUERY>", sep = "")
   STATGPT_CONTEXT <- paste("<CODE>",prompt_context,"</CODE>", sep = "")
-  STATGPT_SUFFIX <- "Only respond with code as plain text without code block syntax or backticks around it"
+  STATGPT_SUFFIX <- "You are an R expert. Only respond with quality R code as plain text without code block syntax or backticks around it"
   STATGPT_PROMPT <- paste(STATGPT_CONTEXT, STATGPT_QUERY, STATGPT_SUFFIX, collapse="")
 
   # Accurate tokenization would require linking to python and using tiktoken;
@@ -62,6 +77,8 @@ prompt_GPT <- \(prompt_query,
   }
 
   parsed_content <- content(post_res)
+  print(class(parsed_content))
+  print(length(parsed_content))
 
   log_debug(paste("\n\tEstimated tokens:",STATGPT_EST_TOKEN,
                   "\n\tEstimated tokens (truncated):",EST_TOKEN_TRUNC,
