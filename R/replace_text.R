@@ -1,3 +1,13 @@
+#' Replace selection text with code completion
+#'
+#' @return (string) code completion inside the editor
+#' @export
+#'
+#' @examples
+#'
+#'
+
+
 replace_text <- function() {
 
   # Get document context
@@ -21,7 +31,17 @@ replace_text <- function() {
   }
 }
 
-# Simple minification
+#' Rudimentary minification of code
+#'
+#' @param currentLine (integer) line number of selected text
+#'
+#' @return (string) code context with whitespace and explicit comments removed
+#' @export
+#'
+#' @examples
+#'
+#'
+
 get_minified_code <- \(currentLine) {
 
   # Get raw code context
@@ -35,11 +55,7 @@ get_minified_code <- \(currentLine) {
 
   # Remove empty lines
   ctx_code <- ctx_code[ctx_code != ""]
-
   ctx_collapsed <- paste(ctx_code, collapse = "")
-
-  ctx_est_tokens <- nchar(ctx_collapsed)/4
-  log_debug(paste("Estimated minified ctx tokens: ", ctx_est_tokens))
 
   return(ctx_collapsed)
 }
