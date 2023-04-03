@@ -77,8 +77,6 @@ prompt_GPT <- \(prompt_query,
   }
 
   parsed_content <- content(post_res)
-  print(class(parsed_content))
-  print(length(parsed_content))
 
   log_debug(paste("\n\tEstimated tokens:",STATGPT_EST_TOKEN,
                   "\n\tEstimated tokens (truncated):",EST_TOKEN_TRUNC,

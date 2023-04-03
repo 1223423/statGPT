@@ -7,8 +7,7 @@
 #'
 #'
 
-
-replace_text <- function() {
+replace_text <- \() {
 
   # Get document context
   ctx <- rstudioapi::getSourceEditorContext()
