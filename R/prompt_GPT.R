@@ -5,7 +5,8 @@ prompt_GPT <- \(prompt_query,
                 prompt_context,
                 API_KEY = Sys.getenv("OPENAI_API_KEY"),
                 MODEL = Sys.getenv("OPENAI_MODEL"),
-                CONTEXT_LIMIT = as.numeric(Sys.getenv("STATGPT_CTXLIM", 2750))
+                CONTEXT_LIMIT = as.numeric(Sys.getenv("STATGPT_CTXLIM", 2750)),
+                TEMPERATURE = as.numeric(Sys.getenv("OPENAI_TEMPERATURE", 1))
                 ) {
 
   # Check if API_KEY, MODEL are defined
@@ -18,7 +19,10 @@ prompt_GPT <- \(prompt_query,
   STATGPT_CONTEXT <- paste("<CODE>",prompt_context,"</CODE>", sep = "")
   STATGPT_SUFFIX <- "Only respond with code as plain text without code block syntax or backticks around it"
   STATGPT_PROMPT <- paste(STATGPT_CONTEXT, STATGPT_QUERY, STATGPT_SUFFIX, collapse="")
-  char_token_ratio <- 3.2
+
+  # Accurate tokenization would require linking to python and using tiktoken;
+  # Using an estimate token to char does the job well
+  char_token_ratio <- 3.25
 
   # Rough token estimate for token usage
   STATGPT_EST_TOKEN <- round(nchar(STATGPT_PROMPT)/char_token_ratio,0)
@@ -32,11 +36,12 @@ prompt_GPT <- \(prompt_query,
   }
 
   # Rough estimate of tokens post truncation
-  EST_TOKEN_TRUNC <- round(nchar(paste(STATGPT_PROMPT,STATGPT_SUFFIX,STATGPT_SYSTEM,collapse=""))/char_token_ratio,0)
+  EST_TOKEN_TRUNC <- round(nchar(STATGPT_PROMPT)/char_token_ratio,0)
 
   # Completion request settings
   parameters <- list(
-    model = MODEL
+    model = MODEL,
+    temperature = TEMPERATURE
     )
 
   messages <- list(
@@ -58,11 +63,13 @@ prompt_GPT <- \(prompt_query,
 
   parsed_content <- content(post_res)
 
-  log_debug(paste("Estimated tokens:",STATGPT_EST_TOKEN,
-                  "Estimated tokens (truncated):",EST_TOKEN_TRUNC,
-                  "Token Usage:\n","\tPrompt:",parsed_content$usage$prompt_tokens,
+  log_debug(paste("\n\tEstimated tokens:",STATGPT_EST_TOKEN,
+                  "\n\tEstimated tokens (truncated):",EST_TOKEN_TRUNC,
+                  "\n\tToken Usage:\n","\tPrompt:",parsed_content$usage$prompt_tokens,
                   "\n\tCompletion:",parsed_content$usage$completion_tokens,
-                  "\n\tTotal:",parsed_content$usage$total_tokens, "|", CONTEXT_LIMIT))
+                  "\n\tTotal:",parsed_content$usage$total_tokens, "|", CONTEXT_LIMIT,
+                  "\n\tTCR:", round(nchar(STATGPT_PROMPT)/parsed_content$usage$prompt_tokens,2))
+                  )
 
   return(parsed_content)
 }

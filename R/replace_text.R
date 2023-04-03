@@ -13,10 +13,8 @@ replace_text <- function() {
     prompt_query <- ctx$selection[[1]]$text
 
     prompt_context = get_minified_code(currentLine)
-    #prompt_context = paste("[CODE BEGIN]",code_context, "[CODE END]")
-    response <- prompt_GPT(prompt_query, prompt_context)
 
-    log_debug(paste("Response:\n\t",response$choices[[1]]$message$content))
+    response <- prompt_GPT(prompt_query, prompt_context)
 
     # Replace selection with response
     rstudioapi::modifyRange(rstudioapi::getSourceEditorContext()$selection[[1]]$range, response$choices[[1]]$message$content)
