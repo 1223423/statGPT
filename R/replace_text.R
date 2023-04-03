@@ -6,27 +6,44 @@ replace_text <- function() {
   # Checks that a document is active
   if (!is.null(ctx)) {
 
-    # Extracts selection as a string
-    selected_text <- ctx$selection[[1]]$text
-
+    # Find current line
     currentLine = ctx$selection[[1]]$range[[1]][1]
-    code_context <- paste(list(ctx$content)[1:currentLine-1], collapse = "")
 
-    prompt_query = paste("[USER REQUEST BEGIN]",selected_text,"[USER REQUEST END]")
-    prompt_context = paste("[CODE BEGIN]",code_context, "[CODE END]")
-    response <- prompt_GPT(prompt = paste(prompt_query,prompt_context))
+    # Extract selection as a string
+    prompt_query <- ctx$selection[[1]]$text
+
+    prompt_context = get_minified_code(currentLine)
+    #prompt_context = paste("[CODE BEGIN]",code_context, "[CODE END]")
+    response <- prompt_GPT(prompt_query, prompt_context)
 
     log_debug(paste("Response:\n\t",response$choices[[1]]$message$content))
 
-    # replaces selection with string
+    # Replace selection with response
     rstudioapi::modifyRange(rstudioapi::getSourceEditorContext()$selection[[1]]$range, response$choices[[1]]$message$content)
   }
 }
 
-#plot(mtcars$hp, mtcars$mpg)
+# Simple minification
+get_minified_code <- \(currentLine) {
 
+  # Get raw code context
+  ctx_code <- rstudioapi::getSourceEditorContext()$content[1:currentLine-1]
 
+  # Remove leading whitespace
+  ctx_code <- unlist(lapply(ctx_code, \(s) sub("^\\s+", "", s)))
 
+  # Remove explicit comment lines
+  ctx_code <- ctx_code[sapply(ctx_code, \(s) return(substr(s,1,1) != '#'))]
 
+  # Remove empty lines
+  ctx_code <- ctx_code[ctx_code != ""]
+
+  ctx_collapsed <- paste(ctx_code, collapse = "")
+
+  ctx_est_tokens <- nchar(ctx_collapsed)/4
+  log_debug(paste("Estimated minified ctx tokens: ", ctx_est_tokens))
+
+  return(ctx_collapsed)
+}
 
 
