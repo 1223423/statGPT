@@ -1,6 +1,6 @@
 # statGPT
 
-A simple RStudio addin to instantly transform broken English into working code, visualization, analysis, and more using OpenAI's GPT models. When activated, the addin will attempt to replace the highlighted text request into working code.
+A simple RStudio addin to instantly transform broken English into working code, visualization, analysis, and more using OpenAI's GPT models. When activated, the addin will attempt to replace the highlighted text request with working code.
 
 Attempts to provide context of previously written slightly minified code (currently only removing explicit comments & whitespace). If the code context is too large it will be truncated such that the total prompt is by default around ~2750 tokens, leaving the remainder of the 4096 tokens (assuming gpt-3-turbo) for the response. Precise truncation is done via Open AI's ['tiktoken'](https://github.com/openai/tiktoken) library via linked python code. Python > 3.8 is required for this.
 
@@ -26,6 +26,10 @@ Alternatively, you can set persistent keys in your `.Renviron` file.
 ## Demo
 
 [demo.webm](https://user-images.githubusercontent.com/40682719/229134788-66de0b87-24bb-4a14-bb83-06b094d42918.webm)
+
+## Dependencies
+
+statGPT requires Open AI's `tiktoken` and therefore Python 3.8 or higher. It also uses the R packages  `reticulate`, `httr`, and `jsonlite`.
 
 ## Questions
 
