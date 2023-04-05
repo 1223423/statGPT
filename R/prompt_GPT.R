@@ -63,11 +63,7 @@ prompt_GPT <- \(prompt_query,
 
   parsed_content <- content(post_res)
 
-<<<<<<< HEAD
   log_debug(paste("Token Usage:\n","\tPrompt:",parsed_content$usage$prompt_tokens,
-=======
-  log_debug(paste("\n\tToken Usage:\n","\tPrompt:",parsed_content$usage$prompt_tokens,
->>>>>>> 758323cf5f01ef7750a1bf071d0951db6765e3ae
                   "\n\tCompletion:",parsed_content$usage$completion_tokens,
                   "\n\tTotal:",parsed_content$usage$total_tokens, "|", CONTEXT_LIMIT)
                   )
@@ -125,11 +121,7 @@ truncated_prompt <- \(prompt, CONTEXT_LIMIT, MODEL) {
   tokens_per_message = 4
 
   if(grepl("gpt-3.5", MODEL, ignore.case = T)) {
-<<<<<<< HEAD
     #log_info("Warning: gpt-3.5-turbo may change over time. Returning num tokens assuming gpt-3.5-turbo-0301.")
-=======
-    log_info("Warning: gpt-3.5-turbo may change over time. Returning num tokens assuming gpt-3.5-turbo-0301.")
->>>>>>> 758323cf5f01ef7750a1bf071d0951db6765e3ae
     tokens_per_message = 4
   }
 
