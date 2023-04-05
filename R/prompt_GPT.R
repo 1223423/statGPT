@@ -4,7 +4,7 @@
 #' @param prompt_query (string) the query to be sent to the AI model.
 #' @param prompt_context (string) the code context for the query (optional).
 #' @param API_KEY (string) the OpenAI API key.
-#' @param MODEL (string) the name of the AI model.
+#' @param MODEL (string) the name of the AI model (optional, default: 'gpt-3.5-turbo').
 #' @param CONTEXT_LIMIT (integer) the total prompt limit in estimated tokens (optional, default: 2750)
 #' @param TEMPERATURE (float) the model temperature ranging 0-2 (optional, default: 1)
 #'
@@ -19,7 +19,7 @@
 prompt_GPT <- \(prompt_query,
                 prompt_context = "",
                 API_KEY = Sys.getenv("OPENAI_API_KEY"),
-                MODEL = Sys.getenv("OPENAI_MODEL"),
+                MODEL = Sys.getenv("OPENAI_MODEL", 'gpt-3.5-turbo'),
                 CONTEXT_LIMIT = as.numeric(Sys.getenv("STATGPT_CTXLIM", 2750)),
                 TEMPERATURE = as.numeric(Sys.getenv("OPENAI_TEMPERATURE", 1))
                 ) {
@@ -35,23 +35,8 @@ prompt_GPT <- \(prompt_query,
   STATGPT_SUFFIX <- "You are an R expert. Only respond with quality R code as plain text without code block syntax or backticks around it"
   STATGPT_PROMPT <- paste(STATGPT_CONTEXT, STATGPT_QUERY, STATGPT_SUFFIX, collapse="")
 
-  # Accurate tokenization would require linking to python and using tiktoken;
-  # Using an estimate token to char does the job well
-  char_token_ratio <- 3.25
-
-  # Rough token estimate for token usage
-  STATGPT_EST_TOKEN <- round(nchar(STATGPT_PROMPT)/char_token_ratio,0)
-  #log_debug(paste("Estimated tokens:",STATGPT_EST_TOKEN))
-
-  # Truncate code context if too many tokens are being used
-  if(STATGPT_EST_TOKEN >= CONTEXT_LIMIT) {
-    log_info(paste("Context limit (",CONTEXT_LIMIT,") exceeded (",STATGPT_EST_TOKEN,"). Context has been truncated.", sep = ""))
-    cl <- nchar(STATGPT_PROMPT)
-    STATGPT_PROMPT <- substr(STATGPT_PROMPT, cl-CONTEXT_LIMIT*char_token_ratio, cl)
-  }
-
-  # Rough estimate of tokens post truncation
-  EST_TOKEN_TRUNC <- round(nchar(STATGPT_PROMPT)/char_token_ratio,0)
+  # Use python-linked tiktoken lib to accurately truncate tokens
+  STATGPT_PROMPT <- truncated_prompt(STATGPT_PROMPT, CONTEXT_LIMIT, MODEL)
 
   # Completion request settings
   parameters <- list(
@@ -78,14 +63,76 @@ prompt_GPT <- \(prompt_query,
 
   parsed_content <- content(post_res)
 
-  log_debug(paste("\n\tEstimated tokens:",STATGPT_EST_TOKEN,
-                  "\n\tEstimated tokens (truncated):",EST_TOKEN_TRUNC,
-                  "\n\tToken Usage:\n","\tPrompt:",parsed_content$usage$prompt_tokens,
+  log_debug(paste("Token Usage:\n","\tPrompt:",parsed_content$usage$prompt_tokens,
                   "\n\tCompletion:",parsed_content$usage$completion_tokens,
-                  "\n\tTotal:",parsed_content$usage$total_tokens, "|", CONTEXT_LIMIT,
-                  "\n\tTCR:", round(nchar(STATGPT_PROMPT)/parsed_content$usage$prompt_tokens,2))
+                  "\n\tTotal:",parsed_content$usage$total_tokens, "|", CONTEXT_LIMIT)
                   )
 
   return(parsed_content)
 }
 
+truncated_prompt <- \(prompt, CONTEXT_LIMIT, MODEL) {
+
+  env = "r-statGPT"
+  v_req = "3.8"
+
+  # Create the environment if it doesn't exist
+  if (!env %in% conda_list()$name) {
+    conda_create(env, python_version = v_req)
+  }
+
+  # Activate the Conda environment
+  use_condaenv(env)
+
+  # Check Python version in the environment
+  python_version <- py_config()$version
+  if (python_version < v_req) {
+    stop(paste("Python version in the environment is",
+               python_version,
+               "but the required version is",
+               v_req,
+               "or higher."))
+  }
+
+  # Install the tiktoken package if it's not already installed
+  if (!py_module_available("tiktoken")) {
+    conda_install(env, "tiktoken")
+  }
+
+  # Use py tiktoken
+  tiktoken <- import("tiktoken")
+  encoder <- tiktoken$encoding_for_model(MODEL)
+  tokenized <- encoder$encode(prompt)
+
+  if(length(tokenized) > CONTEXT_LIMIT) {
+    log_info(paste("Context (",length(tokenized),
+                   ") has been truncated as it exceeds the limit (",
+                   CONTEXT_LIMIT, ")", sep = ""))
+  }
+
+  # Truncate and decode
+  tokenized <- tokenized[1:min(length(tokenized),CONTEXT_LIMIT)]
+  untokenized <- encoder$decode(tokenized)
+
+  # Adjust token overhead
+  # Reference: openai-cookbook/examples/How_to_count_tokens_with_tiktoken.ipynb
+
+  # default tpm
+  tokens_per_message = 4
+
+  if(grepl("gpt-3.5", MODEL, ignore.case = T)) {
+    #log_info("Warning: gpt-3.5-turbo may change over time. Returning num tokens assuming gpt-3.5-turbo-0301.")
+    tokens_per_message = 4
+  }
+
+  else if(grepl("gpt-4", MODEL, ignore.case = T)) {
+    tokens_per_message = 3
+  }
+
+  overhead_tokens = 3
+  user_tokens = 1
+
+  log_debug(paste("Tokenized length:", length(tokenized) + tokens_per_message + overhead_tokens + user_tokens))
+
+  return(untokenized)
+}
