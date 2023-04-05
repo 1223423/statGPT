@@ -17,7 +17,7 @@ Then set up the required temporary environment variables in RStudio:
 ```
 Sys.setenv(OPENAI_API_KEY = "your api key here")    # API key
 Sys.setenv(OPENAI_MODEL = "gpt-3.5-turbo")          # Model (optional; default: gpt-3.5-turbo)
-Sys.setenv(OPENAI_TEMPERATURE = 0.25)                  # Temperature (optional; default 1)
+Sys.setenv(OPENAI_TEMPERATURE = 0.25)               # Temperature (optional; default 0.25)
 Sys.setenv(STATGPT_DEBUG = 0)                       # Debug logging (optional; default: 0)
 Sys.setenv(STATGPT_CTXLIM = 2750)                   # Input context limit (optional; default ~2750 tokens)
 ```
