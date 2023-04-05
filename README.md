@@ -29,7 +29,11 @@ Alternatively, you can set persistent keys in your `.Renviron` file.
 
 ## Questions
 
+<<<<<<< HEAD
 **What does OPENAI_TEMPERATURE do?** Temperature ranges 0-2 and controls the level of randomness and creativity in output, with values at or close to 0 being nearly deterministic. Default left at 0.25.
+=======
+**What does temperature do?** Temperature ranges 0-2 and controls the level of randomness and creativity in output, with values at or close to 0 being nearly deterministic. Default left at 1.
+>>>>>>> 758323cf5f01ef7750a1bf071d0951db6765e3ae
 
 **What does STATGPT_CTXLIM do?** Each OpenAI model comes with a token limitation shared between input and response. For instance, `gpt-3.5-turbo` has a limit of 4096 tokens. CTXLIM puts an upper bound on the input, by default 2750 tokens, which leaves ~1346 tokens for the response, however, even using OpenAI's tokenizer this can be off by a few tokens (see: ['openai-cookbook'](https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb)). If you're using gpt-4 you'd want to to set this limit to something much higher.
 
