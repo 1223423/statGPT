@@ -21,7 +21,7 @@ prompt_GPT <- \(prompt_query,
                 API_KEY = Sys.getenv("OPENAI_API_KEY"),
                 MODEL = Sys.getenv("OPENAI_MODEL", 'gpt-3.5-turbo'),
                 CONTEXT_LIMIT = as.numeric(Sys.getenv("STATGPT_CTXLIM", 2750)),
-                TEMPERATURE = as.numeric(Sys.getenv("OPENAI_TEMPERATURE", 1))
+                TEMPERATURE = as.numeric(Sys.getenv("OPENAI_TEMPERATURE", 0.25))
                 ) {
 
   # Check if API_KEY, MODEL are defined

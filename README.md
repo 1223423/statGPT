@@ -17,11 +17,11 @@ Then set up the required temporary environment variables in RStudio:
 ```
 Sys.setenv(OPENAI_API_KEY = "your api key here")    # API key
 Sys.setenv(OPENAI_MODEL = "gpt-3.5-turbo")          # Model (optional; default: gpt-3.5-turbo)
-Sys.setenv(OPENAI_TEMPERATURE = 1)                  # Temperature (optional; default 1)
+Sys.setenv(OPENAI_TEMPERATURE = 0.25)                  # Temperature (optional; default 1)
 Sys.setenv(STATGPT_DEBUG = 0)                       # Debug logging (optional; default: 0)
 Sys.setenv(STATGPT_CTXLIM = 2750)                   # Input context limit (optional; default ~2750 tokens)
 ```
-Alternatively, you can set persistent keys in your `.Renviron` file. Note that the temperature is left at the default of 1. Values close to 0 are nearly deterministic, whereas values close to 2 are more 'creative'.
+Alternatively, you can set persistent keys in your `.Renviron` file.
 
 ## Demo
 
@@ -29,7 +29,7 @@ Alternatively, you can set persistent keys in your `.Renviron` file. Note that t
 
 ## Questions
 
-**What does temperature do?** Temperature ranges 0-2 and controls the level of randomness and creativity in output, with values at or close to 0 being nearly deterministic. Default left at 1.
+**What does OPENAI_TEMPERATURE do?** Temperature ranges 0-2 and controls the level of randomness and creativity in output, with values at or close to 0 being nearly deterministic. Default left at 0.25.
 
 **What does STATGPT_CTXLIM do?** Each OpenAI model comes with a token limitation shared between input and response. For instance, `gpt-3.5-turbo` has a limit of 4096 tokens. CTXLIM puts an upper bound on the input, by default 2750 tokens, which leaves ~1346 tokens for the response, however, even using OpenAI's tokenizer this can be off by a few tokens (see: ['openai-cookbook'](https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb)). If you're using gpt-4 you'd want to to set this limit to something much higher.
 
