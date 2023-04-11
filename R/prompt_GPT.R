@@ -26,7 +26,11 @@ prompt_GPT <- \(prompt_query,
 
   # Check if API_KEY, MODEL are defined
   if(!(nchar(API_KEY) && nchar(MODEL))) {
-    stop("Either or both the API key and MODEL key are not set!")
+    stop("[STATGPT] OPENAI API key not set! Set it using Sys.setenv(OPENAI_API_KEY = 'your key here')")
+  }
+
+  if(!nchar(prompt_query)) {
+    stop("[STATGPT] No prompt selected. Try again.")
   }
 
   # Prompt design
@@ -65,7 +69,7 @@ prompt_GPT <- \(prompt_query,
 
   log_debug(paste("Token Usage:\n","\tPrompt:",parsed_content$usage$prompt_tokens,
                   "\n\tCompletion:",parsed_content$usage$completion_tokens,
-                  "\n\tTotal:",parsed_content$usage$total_tokens, "|", CONTEXT_LIMIT)
+                  "\n\tTotal:",parsed_content$usage$total_tokens, "|", 4096)
                   )
 
   return(parsed_content)
@@ -121,7 +125,7 @@ truncated_prompt <- \(prompt, CONTEXT_LIMIT, MODEL) {
   tokens_per_message = 4
 
   if(grepl("gpt-3.5", MODEL, ignore.case = T)) {
-    #log_info("Warning: gpt-3.5-turbo may change over time. Returning num tokens assuming gpt-3.5-turbo-0301.")
+    log_debug("Warning: gpt-3.5-turbo may change over time. Returning num tokens assuming gpt-3.5-turbo-0301.")
     tokens_per_message = 4
   }
 
