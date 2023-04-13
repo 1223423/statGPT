@@ -1,11 +1,19 @@
 Package: statGPT
 Type: Package
-Title: Interfaces OpenAI's API For Code Completion
+Title: Interface to OpenAI's API For Code Completion
 Version: 0.1.0
-Author: Ben Cerne
+Authors@R: c(person("Ben", "Cerne", email = "bencerne@gmail.com", 
+              role = c("aut", "cre")))
 Maintainer: Ben Cerne <bencerne@gmail.com>
-Description: stuff
-License: use_mit_license()
+Description: The 'statGPT' addin takes in a user query in the form of highlighted lines
+              directly in the RStudio editor, and returns a code completion
+              given an OpenAI model and API key.
+License: MIT + file LICENSE
+Imports:
+    httr,
+    jsonlite,
+    reticulate,
+    rstudioapi
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3

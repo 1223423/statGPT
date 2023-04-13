@@ -1,4 +1,4 @@
 Name: statGPT
-Description: Replace highlighted text and code with (hopefully) working code.
-Binding: replace_text
+Description: Replace highlighted query with (hopefully) working code.
+Binding: replace_query
 Interactive: true
