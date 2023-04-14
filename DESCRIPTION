@@ -1,6 +1,6 @@
 Package: statGPT
 Type: Package
-Title: Interface to OpenAI's API For Code Completion
+Title: Interface to OpenAI's API for Code Completion
 Version: 0.1.0
 Authors@R: c(person("Ben", "Cerne", email = "bencerne@gmail.com", 
               role = c("aut", "cre")))

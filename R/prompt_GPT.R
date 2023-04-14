@@ -20,9 +20,14 @@ prompt_GPT <- \(prompt_query,
                 TEMPERATURE = as.numeric(Sys.getenv("OPENAI_TEMPERATURE", 0.25))
                 ) {
 
-  # Check if API_KEY, MODEL are defined
-  if(!(nchar(API_KEY) && nchar(MODEL))) {
-    stop("[STATGPT] OPENAI API key not set! Set it using Sys.setenv(OPENAI_API_KEY = 'your key here')")
+  # Check if API_KEY is set, if not prompt the user
+  if(!(nchar(API_KEY))) {
+    API_KEY = showPrompt("OpenAI API KEY", "OPENAI_API_KEY was not found in the environment.\n\n Please set a key for this session.", default = NULL)
+  }
+
+  # Check if MODEL is set, if not, prompt the user
+  if (!(nchar(MODEL))) {
+    API_KEY = showPrompt("OpenAI Model", "MODEL was not found in the environment.\n\n Please set a model for this session.", default = "gpt-3.5-turbo")
   }
 
   if(!nchar(prompt_query)) {
@@ -48,7 +53,7 @@ prompt_GPT <- \(prompt_query,
     list(role = "user", content = STATGPT_PROMPT)
   )
 
-  post_res <- httr::POST(
+  post_res <- POST(
     "https://api.openai.com/v1/chat/completions",
     add_headers("Authorization" = paste("Bearer", API_KEY)),
     content_type_json(),

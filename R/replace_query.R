@@ -1,15 +1,15 @@
-#' Pass selected text as query, along with code context above that line
-#' and replace it with OpenAI code completion
+#' Replace query with completion
+#'
+#' This function captures the selected text as a query, along with code context
+#' between line 0 and the selected line. Then a prompt is generated, and the
+#' selected query is replaced with the result from the model.
 #'
 #' @return none
-#' @examples
-#' replace_query()
-#'
 
 replace_query <- \() {
 
   # Get editor document context
-  ctx <- rstudioapi::getSourceEditorContext()
+  ctx <- getSourceEditorContext()
 
   # Check that the document is active
   if (!is.null(ctx)) {
@@ -27,9 +27,6 @@ replace_query <- \() {
     response <- prompt_GPT(prompt_query, prompt_context)
 
     # Replace selected line(s) with model response
-    rstudioapi::modifyRange(rstudioapi::getSourceEditorContext()$selection[[1]]$range, response$choices[[1]]$message$content)
+    modifyRange(getSourceEditorContext()$selection[[1]]$range, response$choices[[1]]$message$content)
   }
 }
-
-
-
