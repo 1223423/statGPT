@@ -27,7 +27,7 @@ prompt_GPT <- \(prompt_query,
 
   # Check if MODEL is set, if not, prompt the user
   if (!(nchar(MODEL))) {
-    API_KEY = showPrompt("OpenAI Model", "MODEL was not found in the environment.\n\n Please set a model for this session.", default = "gpt-3.5-turbo")
+    MODEL = showPrompt("OpenAI Model", "MODEL was not found in the environment.\n\n Please set a model for this session.", default = "gpt-3.5-turbo")
   }
 
   if(!nchar(prompt_query)) {
