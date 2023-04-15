@@ -23,11 +23,13 @@ prompt_GPT <- \(prompt_query,
   # Check if API_KEY is set, if not prompt the user
   if(!(nchar(API_KEY))) {
     API_KEY = showPrompt("OpenAI API KEY", "OPENAI_API_KEY was not found in the environment.\n\n Please set a key for this session.", default = NULL)
-  }
+    Sys.setenv(OPENAI_API_KEY = API_KEY)
+    }
 
   # Check if MODEL is set, if not, prompt the user
   if (!(nchar(MODEL))) {
     MODEL = showPrompt("OpenAI Model", "MODEL was not found in the environment.\n\n Please set a model for this session.", default = "gpt-3.5-turbo")
+    Sys.setenv(OPENAI_MODEL = MODEL)
   }
 
   if(!nchar(prompt_query)) {
